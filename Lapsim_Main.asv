@@ -1,3 +1,0 @@
-load('C:\Laptime\Tracks\CroixTernoisTrack.mat')
-Track = curvature(Track);
-plot(
