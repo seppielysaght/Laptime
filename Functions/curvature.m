@@ -18,9 +18,11 @@ function [Track] = curvature(Track)
 %   04/11/2019: Initial creation
 % *************************************************************************
 Track.lenght = length(Track.X);
-Track.curv = zeros(Track.lenght,1);
+Track.radius = zeros(Track.lenght,1);
 Track.closed = true;
-Track.dxdy = Track.curv;
+Track.dxdy = Track.radius;
+Track.curv = Track.radius;
+curvStraight = 0.025;
 
 if Track.closed == true
     x1 = Track.X(Track.lenght);
@@ -33,7 +35,7 @@ if Track.closed == true
     B = (x1^2+y1^2)*(y3-y2)+(x2^2+y2^2)*(y1-y3)+(x3^2+y3^2)*(y2-y1);
     C = (x1^2+y1^2)*(x2-x3)+(x2^2+y2^2)*(x3-x1)+(x3^2+y3^2)*(x1-x2);
     D = (x1^2+y1^2)*((x3*y2)-(x2*y3))+(x2^2+y2^2)*((x1*y3)-(x3*y1))+(x3^2+y3^2)*((x2*y1)-(x1*y2));
-    Track.curv(1) = 1/sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
+    Track.radius(1) = sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
     
     x1 = Track.X(Track.lenght-1);
     x2 = Track.X(Track.lenght);
@@ -45,11 +47,11 @@ if Track.closed == true
     B = (x1^2+y1^2)*(y3-y2)+(x2^2+y2^2)*(y1-y3)+(x3^2+y3^2)*(y2-y1);
     C = (x1^2+y1^2)*(x2-x3)+(x2^2+y2^2)*(x3-x1)+(x3^2+y3^2)*(x1-x2);
     D = (x1^2+y1^2)*((x3*y2)-(x2*y3))+(x2^2+y2^2)*((x1*y3)-(x3*y1))+(x3^2+y3^2)*((x2*y1)-(x1*y2));
-    Track.curv(Track.lenght) = 1/sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
+    Track.radius(Track.lenght) = sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
     
 else
-    Track.curv(1) = 0;
-    Track.curv(Track.lenght)= 0;
+    Track.radius(1) = 0.00001;
+    Track.radius(Track.lenght)= 0.00001;
 end
 n = 2;
 while n < Track.lenght
@@ -63,27 +65,30 @@ while n < Track.lenght
     B = (x1^2+y1^2)*(y3-y2)+(x2^2+y2^2)*(y1-y3)+(x3^2+y3^2)*(y2-y1);
     C = (x1^2+y1^2)*(x2-x3)+(x2^2+y2^2)*(x3-x1)+(x3^2+y3^2)*(x1-x2);
     D = (x1^2+y1^2)*((x3*y2)-(x2*y3))+(x2^2+y2^2)*((x1*y3)-(x3*y1))+(x3^2+y3^2)*((x2*y1)-(x1*y2));
-    Track.curv(n) = 1/sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
-    Track.dxdy(n) = (y2-y1)/(x2-x1);
+    Track.radius(n) = sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
+    Track.dy(n) = (y3-y2);
+    Track.dx(n) = (x3-x2);
+    Track.dxdy(n) = Track.dy(n)/Track.dx(n);
+    Track.curv(n) = 1/Track.radius(n);
+    if Track.curv(n) <= curvStraight
+        Track.radius(n) = 0;
+    end
     n = n + 1;
 end
 
-Track.mYaw = gradient(Track.dxdy);
-Track.curvature = sign(Track.mYaw).*Track.curv;
-
-%Remember to move these inputs
-maxCurvature = 0.25;
-N=2; 
-Wn=.05;
-
-[B,A] = butter(N,Wn,'low');
-Track.unfilteredCurvature = Track.curvature;
-Track.curvature = filtfilt(B, A, Track.curvature);
-
-for n = 1:Track.lenght
-    if abs(Track.curvature(n)) > maxCurvature
-        Track.curvature(n) = sign(Track.curvature(n))*maxCurvature;
+if Track.closed == true
+    if Track.curv(Track.lenght) <= curvStraight
+        Track.radius(Track.lenght) = 0.00001;
+    end
+    if Track.curv(1) <= curvStraight
+        Track.radius(1) = 0.00001;
     end
 end
 
-plot(Track.curvature)
+plot(Track.curv)
+figure 
+plot(Track.radius)
+figure 
+plot(Track.dxdy)
+
+
