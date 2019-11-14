@@ -16,13 +16,14 @@ function [Track] = curvature(Track)
 %
 % CHANGE LOG:
 %   04/11/2019: Initial creation
+%   14/11/2019: filter added to radius
 % *************************************************************************
 Track.lenght = length(Track.X);
 Track.radius = zeros(Track.lenght,1);
 Track.closed = true;
 Track.dxdy = Track.radius;
 Track.curv = Track.radius;
-curvStraight = 0.025;
+curvStraight = 0.0025;
 
 if Track.closed == true
     x1 = Track.X(Track.lenght);
@@ -66,9 +67,6 @@ while n < Track.lenght
     C = (x1^2+y1^2)*(x2-x3)+(x2^2+y2^2)*(x3-x1)+(x3^2+y3^2)*(x1-x2);
     D = (x1^2+y1^2)*((x3*y2)-(x2*y3))+(x2^2+y2^2)*((x1*y3)-(x3*y1))+(x3^2+y3^2)*((x2*y1)-(x1*y2));
     Track.radius(n) = sqrt((B^2+C^2-4*A*D)/(4*(A^2)));
-    Track.dy(n) = (y3-y2);
-    Track.dx(n) = (x3-x2);
-    Track.dxdy(n) = Track.dy(n)/Track.dx(n);
     Track.curv(n) = 1/Track.radius(n);
     if Track.curv(n) <= curvStraight
         Track.radius(n) = 0;
@@ -85,10 +83,28 @@ if Track.closed == true
     end
 end
 
-plot(Track.curv)
-figure 
-plot(Track.radius)
-figure 
-plot(Track.dxdy)
+%filter track radius
+[B,A] = butter(2,0.5,'low');
+Track.radiusfilt = filtfilt(B, A, Track.radius);
+for n = 1:Track.lenght
+    if Track.radiusfilt(n) < 0
+        Track.radiusfilt(n) = 0;
+    end
+end
 
+%filter track curvature
+[C,D] = butter(2,0.05,'low');
+Track.curvfilt = filtfilt(C, D, Track.curv);
+
+%plotting outputs (Used for design phaze will be removed
+figure('Name','Curvature');
+plot(Track.curv)
+hold on
+plot(Track.curvfilt)
+figure('Name','Radius');
+plot(Track.radius)
+hold on 
+plot(Track.radiusfilt)
+figure('Name','Track');
+plot(Track.X,Track.Y)
 

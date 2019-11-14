@@ -9,6 +9,7 @@
 %
 % CHANGE LOG:
 %   04/11/2019: Initial creation
+%   11/11/2019: Corner weight and corner speed added.
 % *************************************************************************
 clear
 
@@ -17,6 +18,9 @@ load('C:\Laptime\Tracks\CroixTernoisTrack.mat')
 
 %calculate curvature
 Track = curvature(Track);
+
+%calculate apexs 
+Track = Apexfinder(Track);
 
 %Create Result STRUCT
 Output.steps = zeros(Track.lenght,1);
@@ -29,3 +33,9 @@ Output = cornerWeights(Car,Track,Output);
 
 %Calculate max cornering speed
 Output = maxCorneringSpeed(Track,Car,Output);
+
+%calculate max straight line 
+Output = maxSpeed(Output,Car,Track);
+
+%calculate lap time 
+Output = laptimeCalc(Output,Track);

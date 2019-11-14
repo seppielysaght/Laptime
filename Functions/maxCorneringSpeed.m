@@ -18,7 +18,7 @@ function [Output] = maxCorneringSpeed(Track,Car,Output)
 % CHANGE LOG:
 %   11/11/2019: Initial creation
 % *************************************************************************
-Output.maxCornerSpeed = zeros(Track.lenght,1);
+Output.VmaxCorner = zeros(Track.lenght,1);
 Output.FRLatMax = zeros(Track.lenght,1);
 Output.FLLatMax = zeros(Track.lenght,1);
 Output.RRLatMax = zeros(Track.lenght,1);
@@ -34,8 +34,12 @@ for n = 1:Track.lenght
     Output.maxLatForce(n) = (Output.FRLatMax(n) + Output.FLLatMax(n) + Output.RRLatMax(n) + Output.RLLatMax(n));
     
     %Calculate max corner speed
-    Output.VmaxCorner(n) = sqrt((Output.maxLatForce(n)*Track.radius(n))/Car.mass);
+    Output.VmaxCorner(n) = sqrt((Output.maxLatForce(n)*Track.radiusfilt(n))/Car.mass);
 end
+
+%plotting output 
+% figure('Name','MaxSpeed Corner');
+% plot(Output.VmaxCorner)
 
 end
 
