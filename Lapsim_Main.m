@@ -14,10 +14,10 @@
 clear
 
 %Load Track Values 
-load('C:\Laptime\Tracks\CroixTernoisTrack.mat')
+load('C:\Laptime\Tracks\FSAEnduranceDistanceRadiusCurvOnly.mat')
 
 %calculate curvature
-Track = curvature(Track);
+%Track = curvature(Track);
 
 %calculate apexs 
 Track = Apexfinder(Track);
@@ -26,7 +26,7 @@ Track = Apexfinder(Track);
 Output.steps = zeros(Track.lenght,1);
 
 %Load Car parameters
-load('C:\Laptime\Cars\RoughTestValuesFSCar.mat')
+load('C:\Laptime\Cars\Test.mat')
 
 %Calculate Vertical Corner Loads
 Output = cornerWeights(Car,Track,Output);

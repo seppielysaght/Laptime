@@ -38,8 +38,8 @@ for n = 1:Track.lenght
 end
 
 %plotting output 
-% figure('Name','MaxSpeed Corner');
-% plot(Output.VmaxCorner)
+figure('Name','MaxSpeed Corner');
+plot(Output.VmaxCorner)
 
 end
 
