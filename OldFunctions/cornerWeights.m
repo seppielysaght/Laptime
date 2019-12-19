@@ -24,8 +24,8 @@ Output.RRVerticalLoad = zeros(Track.lenght,1);
 Output.RLVerticalLoad = zeros(Track.lenght,1);
 
 for n = 1:Track.lenght
-    fRearAxle = ((Car.wheelbase-Car.COGposition)/Car.wheelbase)*(Car.mass*9.81);
-    fFrontAxle = (Car.mass*9.81)-fRearAxle;
+    fStaticRearAxle = ((Car.wheelbase-Car.COGposition)/Car.wheelbase)*(Car.mass*9.81);
+    fStaticFrontAxle = (Car.mass*9.81)-fRearAxle;
     Output.FRVerticalLoad(n) = fFrontAxle/2;
     Output.FLVerticalLoad(n) = fFrontAxle/2;
     Output.RRVerticalLoad(n) = fRearAxle/2;
@@ -33,13 +33,13 @@ for n = 1:Track.lenght
 end
 
 %Uncomment to see load graphs
-% plot(Output.FRVerticalLoad)
-% hold on
-% plot(Output.FLVerticalLoad)
-% hold on
-% plot(Output.RRVerticalLoad)
-% hold on
-% plot(Output.RLVerticalLoad)
+plot(Output.FRVerticalLoad)
+hold on
+plot(Output.FLVerticalLoad)
+hold on
+plot(Output.RRVerticalLoad)
+hold on
+plot(Output.RLVerticalLoad)
 
 end
 

@@ -37,12 +37,12 @@ for n = 2:Track.lenght
     end
     if Track.apex(n-1) == 1 
         if Output.maxVstraight(n-1) > Output.VmaxCorner(n-1)
-            Output.maxVstraight(n) = sqrt(Output.VmaxCorner(n-1)^2 + 2*a*(0.5));
+            Output.maxVstraight(n) = sqrt(Output.VmaxCorner(n-1)^2 + 2*a*(Track.Dis(n)));
         else
-            Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(0.5));
+            Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(Track.Dis(n)));
         end
     else
-        Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(0.5));
+        Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(Track.Dis(n)));
     end
 end
 
@@ -50,9 +50,9 @@ i = Track.lenght-1;
 while i > 1
     d = 9.81;
     if Track.apex(i) == 1
-        Output.Vbraking(i) = sqrt(Output.VmaxCorner(i+1)^2 + 2*d*(0.5));
+        Output.Vbraking(i) = sqrt(Output.VmaxCorner(i+1)^2 + 2*d*(Track.Dis(n)));
     else
-        Output.Vbraking(i) = sqrt(Output.Vbraking(i+1)^2 + 2*d*(0.5));
+        Output.Vbraking(i) = sqrt(Output.Vbraking(i+1)^2 + 2*d*(Track.Dis(n)));
     end
     i = i -1;
 end
@@ -77,12 +77,12 @@ for n = 2:Track.lenght
     end
     if Track.apex(n-1) == 1 
         if Output.maxVstraight(n-1) > Output.VmaxCorner(n-1)
-            Output.maxVstraight(n) = sqrt(Output.VmaxCorner(n-1)^2 + 2*a*(0.5));
+            Output.maxVstraight(n) = sqrt(Output.VmaxCorner(n-1)^2 + 2*a*(Track.Dis(n)));
         else
-            Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(0.5));
+            Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(Track.Dis(n)));
         end
     else
-        Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(0.5));
+        Output.maxVstraight(n) = sqrt(Output.maxVstraight(n-1)^2 + 2*a*(Track.Dis(n)));
     end
 end
 
@@ -90,9 +90,9 @@ i = Track.lenght-1;
 while i > 1
     d = 9.81;
     if Track.apex(i) == 1
-        Output.Vbraking(i) = sqrt(Output.VmaxCorner(i+1)^2 + 2*d*(0.5));
+        Output.Vbraking(i) = sqrt(Output.VmaxCorner(i+1)^2 + 2*d*(Track.Dis(n)));
     else
-        Output.Vbraking(i) = sqrt(Output.Vbraking(i+1)^2 + 2*d*(0.5));
+        Output.Vbraking(i) = sqrt(Output.Vbraking(i+1)^2 + 2*d*(Track.Dis(n)));
     end
     i = i -1;
 end
