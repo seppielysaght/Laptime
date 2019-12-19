@@ -14,28 +14,15 @@
 clear
 
 %Load Track Values 
-load('C:\Laptime\Tracks\FSAEnduranceDistanceRadiusCurvOnly.mat')
+load('C:\Laptime\Tracks\FSGEnduranceDistanceRadiusCurvOnly.mat')
 
 %calculate curvature
-%Track = curvature(Track);
+if Track.curvdone == 0
+    Track = curvature(Track);
+end
 
 %calculate apexs 
 Track = Apexfinder(Track);
 
-%Create Result STRUCT
-Output.steps = zeros(Track.lenght,1);
-
 %Load Car parameters
 load('C:\Laptime\Cars\Test.mat')
-
-%Calculate Vertical Corner Loads
-Output = cornerWeights(Car,Track,Output);
-
-%Calculate max cornering speed
-Output = maxCorneringSpeed(Track,Car,Output);
-
-%calculate max straight line 
-Output = maxSpeed(Output,Car,Track);
-
-%calculate lap time 
-Output = laptimeCalc(Output,Track);

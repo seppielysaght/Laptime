@@ -108,3 +108,4 @@ plot(Track.radiusfilt)
 figure('Name','Track');
 plot(Track.X,Track.Y)
 
+Track.curvdone = 1;
