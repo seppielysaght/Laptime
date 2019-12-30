@@ -26,3 +26,12 @@ Track = Apexfinder(Track);
 
 %Load Car parameters
 load('C:\Laptime\Cars\Test.mat')
+
+%Load Tyre Parameters
+load('C:\Laptime\Tyres\TestTyre.mat')
+
+%Run Simulation
+Output = Simulation(Track, Car, Tyre);
+
+%Time Output
+laptime = sum(Output.time)
