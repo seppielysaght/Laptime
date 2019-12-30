@@ -1,4 +1,4 @@
-function [Output] = Simulation(Track,Car)
+function [Output] = Simulation(Track,Car,Tyre)
 %SIMULATION Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -17,10 +17,10 @@ Output.RLLateralForce = zeros(Track.lenght,1);
 Output.YawRate = zeros(Track.lenght,1);
 Output.GLong = zeros(Track.lenght,1);
 Output.Glat = zeros(Track.lenght,1);
-Output.FRMotorRPM = zeros(Track.lenght,1);
-Output.FLMotorRPM = zeros(Track.lenght,1);
-Output.RRMotorRPM = zeros(Track.lenght,1);
-Output.RLMotorRPM = zeros(Track.lenght,1);
+Output.FRMotorRPM = ones(Track.lenght,1);
+Output.FLMotorRPM = ones(Track.lenght,1);
+Output.RRMotorRPM = ones(Track.lenght,1);
+Output.RLMotorRPM = ones(Track.lenght,1);
 Output.AccelSpeed = zeros(Track.lenght,1);
 Output.DeccelSpeed = zeros(Track.lenght,1);
 Output.CornerSpeed = zeros(Track.lenght,1);
@@ -32,23 +32,26 @@ Output.RRPower = zeros(Track.lenght,1);
 Output.RRTorque = zeros(Track.lenght,1);
 Output.RLPower = zeros(Track.lenght,1);
 Output.RLTorque = zeros(Track.lenght,1);
+Output.CSpeed = zeros(Track.lenght,1);
+Output.ASpeed = zeros(Track.lenght,1);
 
 %Calculate per Input step 
 
-for n=2:Track.lenght
+for n=5:Track.lenght
+    %Motor Torque and Power use
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
-    Output.FRTorque(n) = TorqueLookup(Output.FRMotorRPM(n-1),Car);
-    Output.FLTorque(n) = TorqueLookup(Output.FLMotorRPM(n-1),Car);
-    Output.RRTorque(n) = TorqueLookup(Output.RRMotorRPM(n-1),Car);
-    Output.RLTorque(n) = TorqueLookup(Output.RLMotorRPM(n-1),Car);
-    Output.FRPower(n) = PowerLookup(Output.FRMotorRPM(n-1),Car);
-    Output.FLPower(n) = PowerLookup(Output.FLMotorRPM(n-1),Car);
-    Output.RRPower(n) = PowerLookup(Output.RRMotorRPM(n-1),Car);
-    Output.RLPower(n) = PowerLookup(Output.RLMotorRPM(n-1),Car);
-    Output.FRLateralForce(n) = 
-    Output.FLLateralForce(n) = 
-    Output.RRLateralForce(n) = 
-    Output.RLLateralForce(n) =
+    [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n-1), Car);
+    [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n-1), Car);
+    [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n-1), Car);
+    [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n-1), Car);
+    
+    [Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n)] = FindCornerWeight(Car, Track.Radius(n), Output.Speed(n-1));
+    %How do I calculate new Motor RPM?
+    [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
+    %This is max i need to add whats used
+    Torque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);%Here is wher torque vectoring needs to be added
+    [Output.Speed(n),Output.CSpeed(n),Output.ASpeed(n)] = MaxSpeed(Tyre, Torque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n), Track.Radius(n));
+    Output.time(n) = Track.Dis(n)/(Track.Dis(n)*(Output.Speed(n-1)+Output.Speed(n)));
 end
 
 end
