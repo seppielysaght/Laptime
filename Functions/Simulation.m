@@ -37,9 +37,17 @@ Output.ASpeed = zeros(Track.lenght,1);
 
 %Calculate per Input step 
 
-for n=5:Track.lenght
+for n=2:Track.lenght
     %Motor Torque and Power use
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
+    
+    %Rough RPM calculation for the time being
+    Output.FRMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
+    Output.FLMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
+    Output.RLMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
+    Output.RRMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
+    
+    %Torque and Power Lookup
     [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n-1), Car);
     [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n-1), Car);
     [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n-1), Car);
@@ -48,9 +56,9 @@ for n=5:Track.lenght
     [Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n)] = FindCornerWeight(Car, Track.Radius(n), Output.Speed(n-1));
     %How do I calculate new Motor RPM?
     [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
-    %This is max i need to add whats used
-    Torque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);%Here is wher torque vectoring needs to be added
-    [Output.Speed(n),Output.CSpeed(n),Output.ASpeed(n)] = MaxSpeed(Tyre, Torque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n), Track.Radius(n));
+    %This is max, i need to add whats used
+    Torque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n)%Here is wher torque vectoring needs to be added
+    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Torque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n), Track.Radius(n));
     Output.time(n) = Track.Dis(n)/(Track.Dis(n)*(Output.Speed(n-1)+Output.Speed(n)));
 end
 
