@@ -42,10 +42,10 @@ for n=2:Track.lenght
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
     
     %Rough RPM calculation for the time being
-    Output.FRMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
-    Output.FLMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
-    Output.RLMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
-    Output.RRMotorRPM(n) = (Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60;
+    Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
     
     %Torque and Power Lookup
     [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n-1), Car);
@@ -57,7 +57,7 @@ for n=2:Track.lenght
     %How do I calculate new Motor RPM?
     [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
     %This is max, i need to add whats used
-    Torque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n)%Here is wher torque vectoring needs to be added
+    Torque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);%Here is wher torque vectoring needs to be added
     [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Torque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRVerticalForceMax(n),Output.RLVerticalForceMax(n), Track.Radius(n));
     Output.time(n) = Track.Dis(n)/(Track.Dis(n)*(Output.Speed(n-1)+Output.Speed(n)));
 end
