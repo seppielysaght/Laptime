@@ -6,19 +6,16 @@ CornerSpeed =  MaxCornerSpeed(FRLatMax, FLLatMax, RRLatMax, RLLatMax, Car, Corne
 
 if CornerRadius == 0
     Speed = Accellspeed;
-    BrakingNeeded = 0;
+    BrakingNeeded = 1;
 elseif Accellspeed > CornerSpeed 
     Speed = CornerSpeed;
     BrakingNeeded = 1;
 else
     Speed = Accellspeed;
-    BrakingNeeded = 0;
+    BrakingNeeded = 1;
 end
 
 CSpeed = CornerSpeed;
 ASpeed = Accellspeed;
-
-Entry = 0;
-Exit = 0; 
 end
 

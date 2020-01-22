@@ -1,0 +1,30 @@
+function [FRLoad, FLLoad, RRLoad, RLLoad] = FindCornerWeight(Car, latG)
+%FINDCORNERWEIGHT Summary of this function goes here
+%   Detailed explanation goes here
+
+%Calculate Static Load 
+fStaticRearAxle = ((Car.wheelbase-Car.COGposition)/Car.wheelbase)*(Car.mass*9.81);
+fStaticFrontAxle = (Car.mass*9.81)-fStaticRearAxle;
+
+%Calculate Lateral Weight Transfer 
+latWeightTransferFront = (Car.LatWeightTransfer)*((Car.mass*latG*Car.COGheight)/Car.trackwidth);
+latWeightTransferRear = (1-Car.LatWeightTransfer)*((Car.mass*latG*Car.COGheight)/Car.trackwidth);
+
+if dir == 0 
+    %Going Straight only Longitudinal 
+    
+elseif dir == 1
+    %Going left 
+    
+else
+    %going right 
+    
+end 
+
+FRLoad = fStaticFrontAxle/2;
+FLLoad = fStaticFrontAxle/2;
+RRLoad = fStaticRearAxle/2;
+RLLoad = fStaticRearAxle/2; 
+
+end
+
