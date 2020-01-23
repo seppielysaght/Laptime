@@ -37,4 +37,4 @@ load('C:\Laptime\Tyres\Main_Tyre.mat')
 Output = Simulation(Track, Car, Tyre);
 
 %Time Output
-laptime = sum(Output.time)
+laptime = sum(Output.Time)

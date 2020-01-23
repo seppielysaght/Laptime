@@ -36,7 +36,7 @@ Working.Speeds.Entry = zeros(Track.lenght,1);
 Working.Speeds.Exit = zeros(Track.lenght,1);
 
 %Calculate forward per Input step 
-for n=2:Track.lenght
+for n=3:Track.lenght
     %Motor Torque and Power use
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
     
@@ -55,8 +55,11 @@ for n=2:Track.lenght
     %Lateral Acceleration Calc 
     Output.Glat(n) = (Output.Speed(n-1)^2)/Track.Radius(n-1);
     
+    %Longitdudinal Acceleration Calc
+    Output.GLong(n) = (Output.Speed(n-1)-Output.Speed(n-2))/Output.Time(n-1);
+    
     %Calculates Vertical load at each corner
-    [Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n)] = FindCornerWeight(Car, Output.Glat(n), Track.Dir(n));
+    [Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n)] = FindCornerWeight(Car, Output.Glat(n), Track.Dir(n), Output.GLong(n));
     
     %Calculates Max lateral force availble at the tyre
     [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
@@ -71,7 +74,7 @@ for n=2:Track.lenght
     [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n),Working.Speeds.Entry(n),Working.Speeds.Exit(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n));
     
     %Lap time calculated
-    Output.time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n)));
+    Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n)));
 end %forward end 
 
 %Calculate backwards per input step 

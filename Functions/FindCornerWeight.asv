@@ -22,15 +22,15 @@ if dir == 0
 elseif dir == 1
     %Going left 
     FRLoad = (fStaticFrontAxle/2) + latWeightTransferFront - (longWeightTransfer/2);
-    FLLoad = (fStaticFrontAxle/2) - latWeightTransferFront - (longWeightTransfer/2);
-    RRLoad = (fStaticRearAxle/2) + latWeightTransferRear + (longWeightTransfer/2);
-    RLLoad = (fStaticRearAxle/2) - latWeightTransferRear + (longWeightTransfer/2);
+    FLLoad = (fStaticFrontAxle/2) - latWeightTransferFront;
+    RRLoad = (fStaticRearAxle/2) + latWeightTransferRear;
+    RLLoad = (fStaticRearAxle/2) - latWeightTransferRear;
 else
     %going right 
-    FRLoad = (fStaticFrontAxle/2) - latWeightTransferFront - (longWeightTransfer/2);
-    FLLoad = (fStaticFrontAxle/2) + latWeightTransferFront - (longWeightTransfer/2);
-    RRLoad = (fStaticRearAxle/2) - latWeightTransferRear + (longWeightTransfer/2);
-    RLLoad = (fStaticRearAxle/2) + latWeightTransferRear + (longWeightTransfer/2);
+    FRLoad = (fStaticFrontAxle/2) - latWeightTransferFront;
+    FLLoad = (fStaticFrontAxle/2) + latWeightTransferFront;
+    RRLoad = (fStaticRearAxle/2) - latWeightTransferRear;
+    RLLoad = (fStaticRearAxle/2) + latWeightTransferRear;
 end  
 
 end
