@@ -1,4 +1,4 @@
-function [ FRLat, FLLat, RRLat, RLLat ] = FindLateralForce(Tyre, FRVert, FLVert, RRVert, RLVert, Car)
+function [ FRLong, FLLong, RRLong, RLLong ] = FindLongForce(Tyre, FRVert, FLVert, RRVert, RLVert, Car)
 %FINDLATERALFORCE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,7 +12,7 @@ if FRVert > maxL
 elseif FRVert < minL
     FRcor = 0;
 else
-    FRcor = interp1(Tyre.LoadPoints,Tyre.LatValues,FRVert,'linear');
+    FRcor = interp1(Tyre.LoadPoints,Tyre.LongValues,FRVert,'linear');
 end
 
 %Front Left 
@@ -21,7 +21,7 @@ if FLVert > maxL
 elseif FLVert < minL
     FLcor = 0;
 else
-    FLcor = interp1(Tyre.LoadPoints,Tyre.LatValues,FLVert,'linear');
+    FLcor = interp1(Tyre.LoadPoints,Tyre.LongValues,FLVert,'linear');
 end
 
  % Rear Right
@@ -30,7 +30,7 @@ if RRVert > maxL
 elseif RRVert < minL
     RRcor = 0;
 else
-    RRcor = interp1(Tyre.LoadPoints,Tyre.LatValues,RRVert,'linear');
+    RRcor = interp1(Tyre.LoadPoints,Tyre.LongValues,RRVert,'linear');
 end
 
 %Rear Left 
@@ -39,12 +39,12 @@ if RLVert > maxL
 elseif RLVert < minL
     RLcor = 0;
 else
-    RLcor = interp1(Tyre.LoadPoints,Tyre.LatValues,RLVert,'linear');
+    RLcor = interp1(Tyre.LoadPoints,Tyre.LongValues,RLVert,'linear');
 end
 
-FRLat = FRVert*Tyre.cof*FRcor;
-FLLat = FLVert*Tyre.cof*FLcor;
-RRLat = RRVert*Tyre.cof*RRcor;
-RLLat = RLVert*Tyre.cof*RLcor;
+FRLong = FRVert*Tyre.cof*FRcor;
+FLLong = FLVert*Tyre.cof*FLcor;
+RRLong = RRVert*Tyre.cof*RRcor;
+RLLong = RLVert*Tyre.cof*RLcor;
 end
 

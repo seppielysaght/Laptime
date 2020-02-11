@@ -34,8 +34,7 @@ Output.RLPower = zeros(Track.lenght,1);
 Output.RLTorque = zeros(Track.lenght,1);
 Output.Braking.Needed = zeros(Track.lenght,1);
 
-Output.Time(2) = 0.00000000001;
-
+Output.Time(2) = 0.000000000
 %Calculate forward per Input step 
 for n=3:Track.lenght
     %Motor Torque and Power use
@@ -53,16 +52,17 @@ for n=3:Track.lenght
     [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n-1), Car);
     [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n-1), Car);
     
+    speed2 = Output.Speed(n-2)
     %Lateral Acceleration Calc 
-    if Track.Radius(n-1) == 0 
-        Output.Glat(n) = 0;
-    else
-        Output.Glat(n) = (Output.Speed(n-1)^2)/Track.Radius(n-1);
-    end
+    Output.Glat(n) = (Output.Speed(n-1)^2)/Track.Radius(n-1);
     
+    longbefore = Output.GLong(n)
+    time = Output.Time(n-1)
     %Longitdudinal Acceleration Calc
     Output.GLong(n) = (Output.Speed(n-1)-Output.Speed(n-2))/Output.Time(n-1);
-
+    
+    longafter = Output.GLong(n)
+    
     %Calculates Vertical load at each corner
     [Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n)] = FindCornerWeight(Car, Output.Glat(n), Track.Dir(n), Output.GLong(n));
     
@@ -74,6 +74,7 @@ for n=3:Track.lenght
     %Total forward torque (TV not implemented currently to all torque
     %forward
     FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
+    
     
     %Speed Calculation
     [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n),Output.Braking.Needed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n));
@@ -87,10 +88,11 @@ end %forward end
 n = Track.lenght-1;
 while n >= 2 
     
-    %Calculate max long at tyres.
-    [FRLong,FLLong,RRLong,RLLong] = FindLongForce(Tyre, Output.FRVerticalLoad(n), Output.FLVerticalLoad(n), Output.RRVerticalLoad(n), Output.RLVerticalLoad(n), Car);
-    
-    TotalBraking = FLLong + FRLong + RRLong + RLLong;
+    FLBrakingForce = Output.FLVerticalLoad(n)*Tyre.longcof;
+    FRBrakingForce = Output.FRVerticalLoad(n)*Tyre.longcof;
+    RRBrakingForce = Output.RRVerticalLoad(n)*Tyre.longcof;
+    RLBrakingForce = Output.RLVerticalLoad(n)*Tyre.longcof;
+    TotalBraking = FLBrakingForce + FRBrakingForce + RRBrakingForce + RLBrakingForce;
     decella = TotalBraking/Car.mass;
     if Output.Braking.Needed(n) == 1
         Output.DeccelSpeed(n) = sqrt((Output.Speed(n+1)^2) + (2*decella*Track.Dis(n)));
