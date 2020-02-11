@@ -30,7 +30,7 @@ load('C:\Laptime\Cars\Main_car.mat')
 %load('\\brookesf1\s59\17031059\GitHub\Laptime\Cars\TestUpdatedMotorMapbiggergr.mat')
 
 %Load Tyre Parameters
-load('C:\Laptime\Tyres\Main_Tyre.mat')
+load('C:\Laptime\Tyres\Main_Tyre_Load.mat')
 %load('\\brookesf1\s59\17031059\GitHub\Laptime\Tyres\TestTyre.mat')
 
 %Run Simulation

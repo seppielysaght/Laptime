@@ -32,8 +32,7 @@ Output.RRPower = zeros(Track.lenght,1);
 Output.RRTorque = zeros(Track.lenght,1);
 Output.RLPower = zeros(Track.lenght,1);
 Output.RLTorque = zeros(Track.lenght,1);
-Working.Speeds.Entry = zeros(Track.lenght,1);
-Working.Speeds.Exit = zeros(Track.lenght,1);
+Output.Braking.Needed = zeros(Track.lenght,1);
 
 %Calculate forward per Input step 
 for n=3:Track.lenght
@@ -71,10 +70,11 @@ for n=3:Track.lenght
     FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
     
     %Speed Calculation
-    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n),Working.Speeds.Entry(n),Working.Speeds.Exit(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n));
+    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n),Output.Braking.Needed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n));
     
-    %Lap time calculated
+    %Lap time calculated     
     Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n)));
+    
 end %forward end 
 
 %Calculate backwards per input step 
@@ -87,9 +87,45 @@ while n >= 2
     RLBrakingForce = Output.RLVerticalLoad(n)*Tyre.longcof;
     TotalBraking = FLBrakingForce + FRBrakingForce + RRBrakingForce + RLBrakingForce;
     decella = TotalBraking/Car.mass;
-    Output.DeccelSpeed(n) = sqrt((Output.Speed(n+1)^2) + (2*decella*Track.Dis(n)));
+    if Output.Braking.Needed(n) == 1
+        Output.DeccelSpeed(n) = sqrt((Output.Speed(n+1)^2) + (2*decella*Track.Dis(n)));
+    else
+        Output.DeccelSpeed(n) = sqrt((Output.DeccelSpeed(n+1)^2) + (2*decella*Track.Dis(n)));
+    end
     n = n - 1;
 end %Back cal end
+
+%Forward calculate to make reassure correct values
+for n=3:Track.lenght
+    
+    if Output.DeccelSpeed(n) < Output.Speed(n)
+        Output.Speed(n) = Output.DeccelSpeed(n);
+    else
+        Output.Speed(n) = Output.Speed(n);
+    end
+    
+    %Rough RPM calculation for the time being
+    Output.FRMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.FLMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RLMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RRMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    
+    %Torque and Power Lookup
+    [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n), Car);
+    [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n), Car);
+    [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n), Car);
+    [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n), Car);
+    
+    %Lateral Acceleration Calc 
+    Output.Glat(n) = (Output.Speed(n)^2)/Track.Radius(n);
+    
+    %Longitdudinal Acceleration Calc
+    Output.GLong(n) = (Output.Speed(n)-Output.Speed(n))/Output.Time(n);
+    
+    %Lap time calculated
+    Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n))); 
+    
+end %End of final speed selection
 
 end %Function end 
 
