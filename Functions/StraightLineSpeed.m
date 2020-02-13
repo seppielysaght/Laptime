@@ -1,4 +1,4 @@
-function [Speed] = StraightLineSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert)
+function [Speed] = StraightLineSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert, dragF)
 %STRAIGHTLINESPEED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,10 +12,14 @@ MaxForwardForceTyre = FRLong + FLLong + RRLong +RLLong;
 
 %which is smaller
 if MaxForwardForceTyre > MaxForwardForceMotor
-    ForwardForce = MaxForwardForceMotor;
+    accellforce = MaxForwardForceMotor;
 else
-    ForwardForce = MaxForwardForceTyre;
+    accellforce = MaxForwardForceTyre;
 end
+
+dragF 
+%subract drag from forward force
+ForwardForce = accellforce - dragF;
 
 %calculate speed
 Accell = ForwardForce/Car.mass;

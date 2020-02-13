@@ -1,8 +1,8 @@
-function [Speed,CSpeed, ASpeed, BrakingNeeded] = MaxSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRLatMax, FLLatMax, RRLatMax, RLLatMax, CornerRadius, FRVert, FLVert, RRVert, RLVert)
+function [Speed,CSpeed, ASpeed, BrakingNeeded] = MaxSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRLatMax, FLLatMax, RRLatMax, RLLatMax, CornerRadius, FRVert, FLVert, RRVert, RLVert, dragF)
 %MAXSPEED Summary of this function goes here
 %   Detailed explanation goes here
-Accellspeed = StraightLineSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert);
-CornerSpeed =  MaxCornerSpeed(FRLatMax, FLLatMax, RRLatMax, RLLatMax, Car, CornerRadius);
+Accellspeed = StraightLineSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert, dragF);
+CornerSpeed =  MaxCornerSpeed(FRLatMax, FLLatMax, RRLatMax, RLLatMax, Car, CornerRadius, dragF);
 
 if CornerRadius == 0
     Speed = Accellspeed;
