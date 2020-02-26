@@ -1,0 +1,153 @@
+[Baseline Car]
+Car File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_SeppieFS.car
+[FL Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FL Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FL Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FL Spring_Damper.txt
+Bump Rubber Air Gap=0.000000
+Droop flag=0
+Droop value=1.000000
+[FR Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FR Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FR Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FR Spring_Damper.txt
+Bump Rubber Air Gap=0.000000
+Droop flag=0
+Droop value=1.000000
+[Front Third Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Third Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Third Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Third Spring_Damper.txt
+Bump Rubber Air Gap=5.000000
+Inerter Value=0.000000
+Inerter Air Gap=0.000000
+Third spring gnd gap flag=0
+Droop flag=0
+Droop value=1.000000
+[RL Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RL Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RL Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RL Spring_Damper.txt
+Bump Rubber Air Gap=0.000000
+Droop flag=0
+Droop value=1.000000
+[RR Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RR Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RR Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RR Spring_Damper.txt
+Bump Rubber Air Gap=0.000000
+Droop flag=0
+Droop value=1.000000
+[Rear Third Spring]
+Spring File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Third Spring_Spring.txt
+Brubber File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Third Spring_Bump_Rubber.txt
+Damper File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Third Spring_Damper.txt
+Bump Rubber Air Gap=0.000000
+Inerter Value=0.000000
+Inerter Air Gap=0.000000
+Third spring gnd gap flag=0
+Droop flag=0
+Droop value=1.000000
+[Front Bar]
+Bar File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Bar.txt
+[Rear Bar]
+Bar File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Bar.txt
+[FL Geometry]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FL Geometry_mr.txt
+Geom Points File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FL Geometry_geom.txt
+[FR Geometry]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FR Geometry_mr.txt
+Geom Points File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_FR Geometry_geom.txt
+[RL Geometry]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RL Geometry_mr.txt
+Geom Points File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RL Geometry_geom.txt
+[RR Geometry]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RR Geometry_mr.txt
+Geom Points File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_RR Geometry_geom.txt
+[Front Geometry]
+PR Hub option=0
+PR Hub file=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp__pr_hub_file.txt
+Ack Steer option=0
+Ack Steer file=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp__Ack_steer_file.txt
+[Front Bar Motion Ratio]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Bar Motion Ratio_mr.txt
+[Rear Bar Motion Ratio]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Bar Motion Ratio_mr.txt
+[Front Third spring Motion Ratio]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Front Third spring Motion Ratio_mr.txt
+[Rear Third spring Motion Ratio]
+Motion Ratio File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Rear Third spring Motion Ratio_mr.txt
+[Aero]
+CLA=2.450000
+CDA=0.720000
+Aero_offset=0.030000
+Air Density=1.225000
+Downforce lookup table=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_cla_map.txt
+Drag lookup table=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_cda_map.txt
+Aero balance lookup table=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_ab_map.txt
+[Gearbox]
+Gbox File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Gearbox.txt
+[Engine]
+Eng File=C:\ChassisSim Technologies\ChassisSim_v3_21\def_Setup\def_Sepp_Engine.txt
+Driveline efficiency=0.950000
+[Corner Weights]
+Corner Weight Flag=0
+FL_Weight=0.000000
+FR_Weight=0.000000
+RL_Weight=0.000000
+RR_Weight=0.000000
+[Total Mass]
+Car Mass=220.000000
+[Ride Heights]
+FL RH=30.000000
+FR RH=30.000000
+RL RH=33.000000
+RR RH=33.000000
+[FL Tyre]
+Neg Camber=3.000000
+Toe=-0.161263
+Tpress=137895.004272
+Tyre radius=0.020320
+Castor=4.920159
+Tyre Temp=293.149994
+[FR Tyre]
+Neg Camber=3.000000
+Toe=-0.161263
+Tpress=137895.004272
+Tyre radius=0.020320
+Castor=4.920159
+Tyre Temp=293.149994
+[RL Tyre]
+Neg Camber=2.000000
+Toe=0.166160
+Tpress=137895.004272
+Tyre radius=0.203200
+Castor=0.000000
+Tyre Temp=293.149994
+[RR Tyre]
+Neg Camber=2.000000
+Toe=0.166160
+Tpress=137895.004272
+Tyre radius=0.203200
+Castor=0.000000
+Tyre Temp=293.149994
+[Front Diff]
+Diff Type=1
+[Rear Diff]
+Diff Type=1
+[DRS]
+Enable DRS=0
+Del CLA Front=0.000000
+Del CLA Rear=0.000000
+Del CDA=0.000000
+Start Dist=0.000000
+End Dist=0.000000
+Enable Mult DRS=0
+No Mult DRS Zones=1
+Mult Start Dist1=100.000000
+Mult End Dist1=500.000000
+[Track Temp]
+Cur Temp=303.149994
+[Gear Rev limits]
+Use Limits=0
+Gear File=default.txt
