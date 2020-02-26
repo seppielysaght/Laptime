@@ -17,7 +17,6 @@ else
     accellforce = MaxForwardForceTyre;
 end
 
-dragF 
 %subract drag from forward force
 ForwardForce = accellforce - dragF;
 

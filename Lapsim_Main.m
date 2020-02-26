@@ -15,7 +15,7 @@
 clear
 
 %Load Track Values 
-load('C:\Laptime\Tracks\MainTrack.mat')
+load('C:\Laptime\Tracks\MainTrack_MorePoints.mat')
 %load('\\brookesf1\s59\17031059\GitHub\Laptime\Tracks\FSGEnduranceDistanceRadiusCurvOnly.mat')
 
 %calculate curvature
