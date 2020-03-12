@@ -1,15 +1,11 @@
-function [ percentdiff ] = PercentageCaluculator(comp1, comp2)
+function [ difference, mn ] = PercentageCaluculator(comp1, comp2)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
 lenght1 = length(comp1.Speed);
 lenght2 = length(comp2.Speed);
-val1 = zeros(1000,1);
-val2 = zeros(1000,1);
-diffe = zeros(1000,1);
-percentdiff = zeros(1000,1);
 
-if lenght1 > lenght2
+if lenght1 < lenght2
     points = lenght2;
     for n=1:points
         dist = comp2.Distance(n);
@@ -32,7 +28,13 @@ else
         end
     end
 end
-differnce = abs(diffe)./val1;
-
+plot(val1)
+hold on
+plot(val2)
+hold off
+difference = abs(diffe)./val1;
+plot(difference)
+difference(find(isnan(difference)))=[]
+mn = mean(difference)
 end
 

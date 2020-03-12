@@ -19,15 +19,11 @@ if Torque > 0
         accellforce = MaxForwardForceTyre;
     end
     
-    %subract drag from forward force
-    ForwardForce = accellforce - dragF;
-    
-    %calculate speed
-    Accell = ForwardForce/Car.mass;
-    Speed = sqrt((PreviousSpeed^2) + (2*Accell*Distance));
-else
-    Speed = PreviousSpeed;
-end
+    %subract drag from forward forceForwardForce = accellforce - dragF;
+
+%calculate speed
+Accell = ForwardForce/Car.mass;
+Speed = sqrt((PreviousSpeed^2) + (2*Accell*Distance));
 
 end
 
