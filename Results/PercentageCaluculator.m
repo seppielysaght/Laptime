@@ -34,7 +34,7 @@ plot(val2)
 hold off
 difference = abs(diffe)./val1;
 plot(difference)
-difference(find(isnan(difference)))=[]
-mn = mean(difference)
+difference(isnan(difference))=[];
+mn = mean(difference);
 end
 

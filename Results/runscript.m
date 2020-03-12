@@ -1,6 +1,6 @@
 %%%Run to calc percentage difference
 
-[waste,diff,val] = PercentageCaluculator(Output, results);
+[diff,val] = PercentageCaluculator(Output, results);
 difference = diff./val;
 difference(1) = 0;
 difference(2) = 0;
