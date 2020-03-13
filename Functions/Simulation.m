@@ -44,6 +44,9 @@ Output.Braking = zeros(Track.lenght,1);
 
 Output.Time(2) = 0.00000000001;
 
+%calculate battery specifications
+[MaxVoltage, MaxChargeI, MaxDischargeI, Capacity] = batterydesign( Car );
+
 %Calculate forward per Input step 
 for n=3:Track.lenght
     %Motor Torque and Power use
@@ -102,11 +105,9 @@ for n=3:Track.lenght
     
 end %forward end 
 
-plot(Output.Speed)
-hold on
-
 %Calculate backwards per input step 
 n = Track.lenght-1;
+Output.DeccelSpeed(Track.lenght) =  Output.Speed(Track.lenght);
 while n >= 2 
     
     %Calculate max long at tyres.
@@ -124,29 +125,63 @@ while n >= 2
     n = n - 1;
 end %Back cal end
 
-plot(Output.DeccelSpeed)
-
 %Track is closed so exit speed from last point becomes entry speed to first point 
 Output.Speed(2) = Output.Speed(Track.lenght);
 
 %Forward calculate to make reassure correct values
 for n=3:Track.lenght
     
-    if Output.DeccelSpeed(n) < Output.Speed(n)
-        Output.Speed(n) = Output.DeccelSpeed(n);
-    end
-    
     %Rough RPM calculation for the time being
-    Output.FRMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.FLMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.RLMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.RRMotorRPM(n) = round((Output.Speed(n)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+    Output.RRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
     
     %Torque and Power Lookup
     [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n), Car);
     [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n), Car);
     [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n), Car);
     [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n), Car);
+    
+    %Total forward torque 
+    FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
+    
+    %calculate max regen power
+    MaxChargePower = (MaxVoltage*MaxChargeI)/1000;
+    
+    if Output.DeccelSpeed(n) < Output.Speed(n)
+        Output.Speed(n) = Output.DeccelSpeed(n);
+        Output.Braking(n) = 1;
+        Output.FRTorque(n) = Output.FRTorque(n)*-1;
+        Output.FLTorque(n) = Output.FLTorque(n)*-1;
+        Output.RRTorque(n) = Output.RRTorque(n)*-1;
+        Output.RLTorque(n) = Output.RLTorque(n)*-1;
+        if Output.FRPower(n)>MaxChargePower
+            Output.FRPower(n) = MaxChargePower*-1;
+        else
+            Output.FRPower(n) = Output.FRPower(n)*-1;
+        end
+        if Output.FLPower(n)>MaxChargePower
+            Output.FLPower(n) = MaxChargePower*-1;
+        else
+            Output.FLPower(n) = Output.FLPower(n)*-1;
+        end
+        if Output.RRPower(n)>MaxChargePower
+            Output.RRPower(n) = MaxChargePower*-1;
+        else
+            Output.RRPower(n) = Output.RRPower(n)*-1;
+        end
+        if Output.RLPower(n)>MaxChargePower
+            Output.RLPower(n) = MaxChargePower*-1;
+        else
+            Output.RLPower(n) = Output.RLPower(n)*-1;
+        end
+
+    else
+        %Speed Calculation
+        [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
+        Output.Braking(n) = 0;
+    end
     
     %Lateral Acceleration Calc 
     Output.Glat(n) = (Output.Speed(n)^2)/Track.Radius(n);
@@ -158,7 +193,8 @@ for n=3:Track.lenght
     Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n))); 
     
 end %End of final speed selection
-plot(Output.Speed)
+
+Output.Speed(1) = Output.Speed(2);
 toc %Stop Simulation timing
 end %Function end 
 
