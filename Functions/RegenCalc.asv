@@ -1,0 +1,44 @@
+function [FRPower,FLPower,RRPower,RLPower, FRTorque, FLTorque, RRTorque, RLTorque] = RegenCalc( Speed, Car, MaxChargePower, Tyre)
+%REGENCALC Summary of this function goes here
+%   Detailed explanation goes here
+
+%Calculate Wheel Speed
+FRMotorRPM = round((Speed/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+FLMotorRPM = round((Speed/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+RRMotorRPM = round((Speed/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+RLMotorRPM = round((Speed/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
+
+%Look Up availible torque and used power at that speed
+[FRTorque, FRPower] = MotorLookup(FRMotorRPM, Car);
+[FLTorque, FLPower] = MotorLookup(FLMotorRPM, Car);
+[RRTorque, RRPower] = MotorLookup(RRMotorRPM, Car);
+[RLTorque, RLPower] = MotorLookup(RLMotorRPM, Car);
+
+%Divide the pack charge limit to 
+MaxWheelPower = MaxChargePower/4;
+
+%Check if the power consumed is allowed by the pack
+if FRPower > MaxWheelPower %Front Right Wheel 
+    FRPower = -MaxWheelPower;
+    %Power = interp1(Car.MotorMap.RPM,Car.MotorMap.Power,n,'linear');
+else
+    FRPower
+end 
+
+if FLPower > MaxWheelPower %Front Left Wheel 
+    FLPower = -MaxWheelPower;
+    %Power = interp1(Car.MotorMap.RPM,Car.MotorMap.Power,n,'linear');
+end 
+
+if RRPower > MaxWheelPower %Rear Right Wheel 
+    RRPower = -MaxWheelPower;
+    %Power = interp1(Car.MotorMap.RPM,Car.MotorMap.Power,n,'linear'); 
+end 
+
+if RLPower > MaxWheelPower %Rear Left Wheel 
+    RLPower = -MaxWheelPower;
+    %Power = interp1(Car.MotorMap.RPM,Car.MotorMap.Power,n,'linear');
+end 
+
+
+end

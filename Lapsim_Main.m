@@ -27,7 +27,7 @@ end
 Track = Apexfinder(Track);
 
 %Load Car parameters
-load('C:\Laptime\Cars\Main_car_withAero.mat')
+load('C:\Laptime\Cars\Main_car_advancedMotor_60limit.mat')
 %load('\\brookesf1\s59\17031059\GitHub\Laptime\Cars\TestUpdatedMotorMapbiggergr.mat')
 
 %Load Tyre Parameters
