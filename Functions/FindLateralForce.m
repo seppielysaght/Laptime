@@ -1,12 +1,21 @@
 function [ FRLat, FLLat, RRLat, RLLat ] = FindLateralForce(Tyre, FRVert, FLVert, RRVert, RLVert, Car)
-%FINDLATERALFORCE Summary of this function goes here
-%   Detailed explanation goes here
+% *************************************************************************
+% SCRIPT NAME:
+%   FindLateralForce.m
+%
+% INPUTS:
+%   Car parameters Struct, Tyre parameter Struct, FR Vertical Load (N), FL Vertical Load (N),RR Vertical Load (N), RL Vertical Load (N)
+% 
+% OUTPUTS:
+%   FR Lateral Force Availible (N), FL Lateral Force Availible (N), RR Lateral Force Availible (N), RL Lateral Force Availible (N),
+% *************************************************************************
 
 %Determine Min and Max of the tyre lookup
 minL = min(Tyre.LoadPoints);
 maxL = max(Tyre.LoadPoints);
 
- % Front Right
+%Look Up Correction factors for each corner dependant on loads
+% Front Right
 if FRVert > maxL
     FRcor = 1;
 elseif FRVert < minL
@@ -42,6 +51,7 @@ else
     RLcor = interp1(Tyre.LoadPoints,Tyre.LatValues,RLVert,'linear');
 end
 
+%Using Loads, Correction factor and tyre coeficent calculate the lateral grip availible
 FRLat = FRVert*Tyre.cof*FRcor;
 FLLat = FLVert*Tyre.cof*FLcor;
 RRLat = RRVert*Tyre.cof*RRcor;

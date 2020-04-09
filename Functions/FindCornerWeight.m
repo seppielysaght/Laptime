@@ -1,6 +1,14 @@
 function [FRLoad, FLLoad, RRLoad, RLLoad] = FindCornerWeight(Car, latG, dir, longG)
-%FINDCORNERWEIGHT Summary of this function goes here
-%   Detailed explanation goes here
+% *************************************************************************
+% SCRIPT NAME:
+%   FindCornerWeights.m
+%
+% INPUTS:
+%   Car parameters Struct, Lateral Forces (G), Curvature direction from track file, Longitudinal Forces (G) 
+% 
+% OUTPUTS:
+%   FRLoad (N), FLLoad (N), RRLoad (N), RLLoad (N)
+% *************************************************************************
 
 %Calculate Static Load 
 fStaticRearAxle = ((Car.wheelbase-Car.COGposition)/Car.wheelbase)*(Car.mass*9.81);

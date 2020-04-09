@@ -1,8 +1,19 @@
 function [Output] = Simulation(Track,Car,Tyre)
-%SIMULATION Summary of this function goes here
-%   Detailed explanation goes here
+% *************************************************************************
+% SCRIPT NAME:
+%   Simulation.m
+%
+% INPUTS:
+%   Car Struct, Track Struct, Tyre Stuct
+% 
+% OUTPUTS:
+%   Output Struct
+% *************************************************************************
+
+%Start Simualtion Counter
 tic
-%Set up Output Data
+
+%Set up Output Struct for all the data
 Output.Distance = zeros(Track.lenght,1);
 Output.Time = zeros(Track.lenght,1);
 Output.FRVerticalLoad = zeros(Track.lenght,1);
@@ -42,10 +53,11 @@ Output.RLPower = zeros(Track.lenght,1);
 Output.RLTorque = zeros(Track.lenght,1);
 Output.Braking = zeros(Track.lenght,1);
 
+%fixing a weird time issue when usign time of 0 
 Output.Time(2) = 0.00000000001;
 
 %calculate battery specifications
-[MaxVoltage, MaxChargeI, MaxDischargeI, Capacity] = batterydesign( Car );
+[MaxVoltage, MaxChargeI, MaxDischargeI, Output.Capacity] = BatteryVariables( Car );
 
 %Checking is the car battery limited or varible limited
 BattLimit = MaxDischargeI*MaxVoltage;
@@ -60,7 +72,7 @@ for n=3:Track.lenght
     %Motor Torque and Power use
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
     
-    %Rough RPM calculation for the time being
+    %Calculate wheel speeds
     Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
     Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
     Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
@@ -103,7 +115,7 @@ for n=3:Track.lenght
     FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
     
     %Calculate reward force caused by Aero Drag
-    [dragF] = DragCalc(Car, Output.Speed(n-1), Track.roh);
+    [dragF] = AeroDrag(Car, Output.Speed(n-1), Track.roh);
     
     %Speed Calculation
     [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
@@ -121,11 +133,16 @@ while n >= 2
     %Calculate max long at tyres.
     [FRLong,FLLong,RRLong,RLLong] = FindLongForce(Tyre, Output.FRVerticalLoad(n), Output.FLVerticalLoad(n), Output.RRVerticalLoad(n), Output.RLVerticalLoad(n), Car);
     
+    %Sum of the 4 corners equals the combined braking effort
     TotalBraking = FLLong + FRLong + RRLong + RLLong;
+    
+    % using F=ma to calculate the resulting decelleration
     decella = TotalBraking/Car.mass;
     
+    %using SUVAT equations to calculate the speed given starting speed and acceleration
     Output.DeccelSpeed(n) = sqrt((Output.DeccelSpeed(n+1)^2) + (2*decella*Track.Dis(n)));
     
+    %Check if braking speed is lower or if original speed can be used
     if Output.Speed(n) < Output.DeccelSpeed(n)
         Output.DeccelSpeed(n) = Output.Speed(n);
     end
@@ -148,7 +165,7 @@ for n=3:Track.lenght
         [Output.FRPower(n), Output.FRTorque(n),Output.FLPower(n), Output.FLTorque(n),Output.RRPower(n), Output.RRTorque(n),Output.RLPower(n), Output.RLTorque(n)] = RegenCalc( Output.Speed(n), Car, MaxChargePower, Tyre);
 
     else
-        %Rough RPM calculation for the time being
+        %Calculate wheel speeds
         Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
         Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
         Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
@@ -166,7 +183,7 @@ for n=3:Track.lenght
         %Acceleration Speed Calculation
         [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
         Output.Braking(n) = 0;
-    end
+    end %end for brakes needed or not calculation
     
     %Lateral Acceleration Calc 
     Output.Glat(n) = (Output.Speed(n)^2)/Track.Radius(n);
@@ -179,7 +196,11 @@ for n=3:Track.lenght
     
 end %End of final speed selection
 
+%Fixing a weird speed discrepency at the start 
 Output.Speed(1) = Output.Speed(2);
-toc %Stop Simulation timing
+
+%Stop Simulation timing
+Output.simtime = toc;
+
 end %Function end 
 
