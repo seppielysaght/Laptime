@@ -21,7 +21,7 @@
 %   13/03/2020: Battery Calculation added
 %   26/03/2020: Motor Model added for power consumtion and Enforced power limits
 % *************************************************************************
-clear
+%clear
 
 %Load Track Values 
 load('C:\Laptime\Tracks\MainTrack_MorePoints.mat')
@@ -36,7 +36,7 @@ end
 Track = ApexFinder(Track);
 
 %Load Car parameters
-load('C:\Laptime\Cars\Main_car_AddedWeight_nolimit.mat')
+%load('C:\Laptime\Cars\TorqueSplit\0.mat')
 %load('\\brookesf1\s59\17031059\GitHub\Laptime\Cars\TestUpdatedMotorMapbiggergr.mat')
 
 %Load Tyre Parameters
@@ -48,3 +48,4 @@ Output = Simulation(Track, Car, Tyre);
 
 %Time Output
 Output.laptime = sum(Output.Time);
+

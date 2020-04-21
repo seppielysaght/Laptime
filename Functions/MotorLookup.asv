@@ -107,12 +107,7 @@ else
     %check they dont break motor limits
     if Tf > MaxTorque
         Tf = MaxTorque;
-        Tr = (MaxTorque/FrontS)*RearS;
-    end
-    if Tr > MaxTorque
-        Tf = (MaxTorque/RearS)*FrontS;
-        Tr = MaxTorque;
-    end
+        Tr = 
 
     %Find efficency for this torque and speed
     effMap = interp1(Car.MotorEffMap.RPM,Car.MotorEffMap.EFF,MotorRPM,'linear');

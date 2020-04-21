@@ -1,23 +1,52 @@
-function [Speed] = StraightLineSpeed(Tyre, Torque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert, dragF)
+function [Speed] = StraightLineSpeed(Tyre, FRTorque, FLTorque, RRTorque, RLTorque, PreviousSpeed, Distance, Car, FRVert, FLVert, RRVert, RLVert, dragF)
 %STRAIGHTLINESPEED Summary of this function goes here
 %   Detailed explanation goes here
 
 %Check motors have not hit a limitor
-if Torque > 0 
+if FRTorque > 0 
     %calculate motor deliverable
-    wheelT = Torque*Car.gearR;
-    MaxForwardForceMotor = wheelT/(Tyre.Dia/2);
+    FRwheelT = FRTorque*Car.gearR;
+    MaxForwardForceFRMotor = FRwheelT/(Tyre.Dia/2);
+    FLwheelT = FLTorque*Car.gearR;
+    MaxForwardForceFLMotor = FLwheelT/(Tyre.Dia/2);
+    RRwheelT = RRTorque*Car.gearR;
+    MaxForwardForceRRMotor = RRwheelT/(Tyre.Dia/2);
+    RLwheelT = RLTorque*Car.gearR;
+    MaxForwardForceRLMotor = RLwheelT/(Tyre.Dia/2);
     
     %calculate tyre possible
     [FRLong,FLLong,RRLong,RLLong] = FindLongForce(Tyre, FRVert, FLVert, RRVert, RLVert, Car);
-    MaxForwardForceTyre = FRLong + FLLong + RRLong +RLLong;
     
-    %which is smaller
-    if MaxForwardForceTyre > MaxForwardForceMotor
-        accellforce = MaxForwardForceMotor;
+    %Use the biggest forward force on each wheel
+    %Front Right
+    if MaxForwardForceFRMotor < FRLong
+        FRf = MaxForwardForceFRMotor;
     else
-        accellforce = MaxForwardForceTyre;
+        FRf = FRLong;
     end
+    
+    %Front Left 
+    if MaxForwardForceFLMotor < FLLong
+        FLf = MaxForwardForceFLMotor;
+    else
+        FLf = FLLong;
+    end
+    
+    %Rear Right 
+    if MaxForwardForceRRMotor < RRLong
+        RRf = MaxForwardForceRRMotor;
+    else
+        RRf = RRLong;
+    end
+    
+    %Rear left 
+    if MaxForwardForceRLMotor < RLLong
+        RLf = MaxForwardForceRLMotor;
+    else
+        RLf = RLLong;
+    end
+    
+    accellforce = FRf + FLf + RRf + RLf;
     
     %subract drag from forward force
     ForwardForce = accellforce - dragF;

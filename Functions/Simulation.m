@@ -1,14 +1,5 @@
 function [Output] = Simulation(Track,Car,Tyre)
-% *************************************************************************
-% SCRIPT NAME:
-%   Simulation.m
-%
-% INPUTS:
-%   Car Struct, Track Struct, Tyre Stuct
-% 
-% OUTPUTS:
-%   Output Struct
-% *************************************************************************
+       
 
 %Start Simualtion Counter
 tic
@@ -62,28 +53,19 @@ Output.Time(2) = 0.00000000001;
 %Checking is the car battery limited or varible limited
 BattLimit = MaxDischargeI*MaxVoltage;
 if BattLimit > Car.PowerLimit
-    PowerLimit = Car.PowerLimit/4;
+    PowerLimit = Car.PowerLimit;
 else
-    PowerLimit = BattLimit/4;
+    PowerLimit = BattLimit;
 end
 
 %Calculate forward per Input step 
 for n=3:Track.lenght
     %Motor Torque and Power use
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
-    
-    %Calculate wheel speeds
-    Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-    Output.RRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
- 
-    %Torque and Power Lookup
-    [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n-1), Car, PowerLimit, Car.TorqueSplit);
-    [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n-1), Car, PowerLimit, Car.TorqueSplit);
-    [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n-1), Car, PowerLimit, Car.TorqueSplit);
-    [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n-1), Car, PowerLimit, Car.TorqueSplit);
-    
+
+    %Calculates wheelspeed, powers and torques
+    [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
+
     %Lateral Acceleration Calc 
     if Track.Radius(n-1) == 0 
         Output.Glat(n) = 0;
@@ -112,13 +94,13 @@ for n=3:Track.lenght
     %Calculate used lateral force of each wheel
     
     %Total forward torque 
-    FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
+    %FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
     
     %Calculate reward force caused by Aero Drag
     [dragF] = AeroDrag(Car, Output.Speed(n-1), Track.roh);
     
     %Speed Calculation
-    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
+    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
 
     %Lap time calculated     
     Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n)));
@@ -162,26 +144,16 @@ for n=3:Track.lenght
     if Output.DeccelSpeed(n) < Output.Speed(n) %%Check what sort of calculation is required
         Output.Speed(n) = Output.DeccelSpeed(n);
         Output.Braking(n) = 1;
-        [Output.FRPower(n), Output.FRTorque(n),Output.FLPower(n), Output.FLTorque(n),Output.RRPower(n), Output.RRTorque(n),Output.RLPower(n), Output.RLTorque(n)] = RegenCalc( Output.Speed(n), Car, MaxChargePower, Tyre);
-
+        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, MaxChargePower, Tyre, Output.Speed(n-1), 1);
     else
-        %Calculate wheel speeds
-        Output.FRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-        Output.FLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-        Output.RLMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-        Output.RRMotorRPM(n) = round((Output.Speed(n-1)/(2*pi()*(Tyre.Dia/2)))*60*Car.gearR,0);
-        
-        %Torque and Power Lookup
-        [Output.FRTorque(n), Output.FRPower(n)] = MotorLookup(Output.FRMotorRPM(n), Car, PowerLimit, Car.TorqueSplit);
-        [Output.FLTorque(n), Output.FLPower(n)] = MotorLookup(Output.FLMotorRPM(n), Car, PowerLimit, Car.TorqueSplit);
-        [Output.RRTorque(n), Output.RRPower(n)] = MotorLookup(Output.RRMotorRPM(n), Car, PowerLimit, Car.TorqueSplit);
-        [Output.RLTorque(n), Output.RLPower(n)] = MotorLookup(Output.RLMotorRPM(n), Car, PowerLimit, Car.TorqueSplit);
+        %Calculate motor parameters
+        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
         
         %Total forward torque
-        FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
+        %FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
         
         %Acceleration Speed Calculation
-        [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, FTorque, Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
+        [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
         Output.Braking(n) = 0;
     end %end for brakes needed or not calculation
     
