@@ -1,4 +1,6 @@
-function [FRTorque, FRPower, FRMotorRPM, FLTorque, FLPower, FLMotorRPM, RRTorque, RRPower, RRMotorRPM, RLTorque, RLPower, RLMotorRPM] = MotorLookup(Car, PowerLimit, Tyre, Speed, RegenBit)
+function [FRTorque, FRPower, FRMotorRPM, FLTorque, FLPower, FLMotorRPM, RRTorque, ...
+    RRPower, RRMotorRPM, RLTorque, RLPower, RLMotorRPM] ...
+    = MotorLookup(Car, PowerLimit, Tyre, Speed, RegenBit)
 % *************************************************************************
 % SCRIPT NAME:
 %   MotorLookup.m

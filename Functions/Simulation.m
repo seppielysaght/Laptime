@@ -1,5 +1,14 @@
 function [Output] = Simulation(Track,Car,Tyre)
-       
+% *************************************************************************
+% SCRIPT NAME:
+%   Simulation.m
+%
+% INPUTS:
+%   Track, Car and Tyre Struct
+% 
+% OUTPUTS:
+%   Results
+% *************************************************************************
 
 %Start Simualtion Counter
 tic
@@ -64,7 +73,10 @@ for n=3:Track.lenght
     Output.Distance(n) = Output.Distance(n-1)+Track.Dis(n);
 
     %Calculates wheelspeed, powers and torques
-    [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
+    [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n)...
+        , Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n)...
+        , Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)]...
+        = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
 
     %Lateral Acceleration Calc 
     if Track.Radius(n-1) == 0 
@@ -77,10 +89,13 @@ for n=3:Track.lenght
     Output.GLong(n) = (Output.Speed(n-1)-Output.Speed(n-2))/Output.Time(n-1);
 
     %Calculates Vertical load at each corner
-    [Output.FRVerticalMechLoad(n),Output.FLVerticalMechLoad(n),Output.RRVerticalMechLoad(n),Output.RLVerticalMechLoad(n)] = FindCornerWeight(Car, Output.Glat(n), Track.Dir(n), Output.GLong(n));
+    [Output.FRVerticalMechLoad(n),Output.FLVerticalMechLoad(n),Output.RRVerticalMechLoad(n)...
+        ,Output.RLVerticalMechLoad(n)] = FindCornerWeight(Car, Output.Glat(n)...
+        , Track.Dir(n), Output.GLong(n));
     
     %Calculate the aero effects on load transfer
-    [Output.FRVerticalAeroLoad(n),Output.FLVerticalAeroLoad(n),Output.RRVerticalAeroLoad(n),Output.RLVerticalAeroLoad(n)] = AeroLoads(Car, Output.Speed(n-1),Track.roh);
+    [Output.FRVerticalAeroLoad(n),Output.FLVerticalAeroLoad(n),Output.RRVerticalAeroLoad(n)...
+        ,Output.RLVerticalAeroLoad(n)] = AeroLoads(Car, Output.Speed(n-1),Track.roh);
         
     %Sum together to get new loads
     Output.FRVerticalLoad(n) = Output.FRVerticalAeroLoad(n)+Output.FRVerticalMechLoad(n);
@@ -89,7 +104,9 @@ for n=3:Track.lenght
     Output.RLVerticalLoad(n) = Output.RLVerticalAeroLoad(n)+Output.RLVerticalMechLoad(n);
     
     %Calculates Max lateral force availble at the tyre
-    [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
+    [Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n)...
+        ,Output.RLLateralForceMax(n)] = FindLateralForce(Tyre, Output.FRVerticalLoad(n)...
+        ,Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n), Car);
     
     %Calculate used lateral force of each wheel
     
@@ -100,7 +117,11 @@ for n=3:Track.lenght
     [dragF] = AeroDrag(Car, Output.Speed(n-1), Track.roh);
     
     %Speed Calculation
-    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
+    [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, ...
+        Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), ...
+        Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n)...
+        ,Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n)...
+        ,Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
 
     %Lap time calculated     
     Output.Time(n) = Track.Dis(n)/(0.5*(Output.Speed(n-1)+Output.Speed(n)));
@@ -113,7 +134,8 @@ Output.DeccelSpeed(Track.lenght) =  Output.Speed(Track.lenght);
 while n >= 2 
     
     %Calculate max long at tyres.
-    [FRLong,FLLong,RRLong,RLLong] = FindLongForce(Tyre, Output.FRVerticalLoad(n), Output.FLVerticalLoad(n), Output.RRVerticalLoad(n), Output.RLVerticalLoad(n), Car);
+    [FRLong,FLLong,RRLong,RLLong] = FindLongForce(Tyre, Output.FRVerticalLoad(n), ...
+        Output.FLVerticalLoad(n), Output.RRVerticalLoad(n), Output.RLVerticalLoad(n), Car);
     
     %Sum of the 4 corners equals the combined braking effort
     TotalBraking = FLLong + FRLong + RRLong + RLLong;
@@ -144,16 +166,26 @@ for n=3:Track.lenght
     if Output.DeccelSpeed(n) < Output.Speed(n) %%Check what sort of calculation is required
         Output.Speed(n) = Output.DeccelSpeed(n);
         Output.Braking(n) = 1;
-        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, MaxChargePower, Tyre, Output.Speed(n-1), 1);
+        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), ...
+            Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), ...
+            Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] ...
+            = MotorLookup(Car, MaxChargePower, Tyre, Output.Speed(n-1), 1);
     else
         %Calculate motor parameters
-        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
+        [Output.FRTorque(n), Output.FRPower(n), Output.FRMotorRPM(n), Output.FLTorque(n), ...
+            Output.FLPower(n), Output.FLMotorRPM(n), Output.RRTorque(n), Output.RRPower(n), ...
+            Output.RRMotorRPM(n), Output.RLTorque(n), Output.RLPower(n), Output.RLMotorRPM(n)] ...
+            = MotorLookup(Car, PowerLimit, Tyre, Output.Speed(n-1), 0);
         
         %Total forward torque
         %FTorque = Output.FRTorque(n) + Output.FLTorque(n) + Output.RRTorque(n) + Output.RLTorque(n);
         
         %Acceleration Speed Calculation
-        [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
+        [Output.Speed(n),Output.CornerSpeed(n),Output.AccelSpeed(n)] = MaxSpeed(Tyre, ...
+            Output.FRTorque(n), Output.FLTorque(n), Output.RRTorque(n), Output.RLTorque(n), ...
+            Output.Speed(n-1), Track.Dis(n), Car, Output.FRLateralForceMax(n),Output.FLLateralForceMax(n),...
+            Output.RRLateralForceMax(n),Output.RLLateralForceMax(n), Track.Radius(n),Output.FRVerticalLoad(n),...
+            Output.FLVerticalLoad(n),Output.RRVerticalLoad(n),Output.RLVerticalLoad(n),dragF);
         Output.Braking(n) = 0;
     end %end for brakes needed or not calculation
     

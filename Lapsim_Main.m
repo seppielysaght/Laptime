@@ -6,11 +6,7 @@
 %   This script simulates the fastest laptime arround a circuit.
 % 
 % KNOW ISSUES:
-%   1- Aero COP not used 
-%   2- MotorModel needs work 
-%   3- Drag not added to braking force
-%   4- No rolling resistance
-%   5- Do I really need apex finder and curvature functions? 
+%   1-
 %
 % CHANGE LOG:
 %   04/11/2019: Initial creation
@@ -21,7 +17,8 @@
 %   13/03/2020: Battery Calculation added
 %   26/03/2020: Motor Model added for power consumtion and Enforced power limits
 % *************************************************************************
-%clear
+
+clear
 
 %Load Track Values 
 load('C:\Laptime\Tracks\MainTrack_MorePoints.mat')
@@ -36,8 +33,8 @@ end
 Track = ApexFinder(Track);
 
 %Load Car parameters
-%load('C:\Laptime\Cars\TorqueSplit\0.mat')
-%load('\\brookesf1\s59\17031059\GitHub\Laptime\Cars\TestUpdatedMotorMapbiggergr.mat')
+load('C:\Laptime\Cars\TorqueSplit\0.mat')
+% load('\\brookesf1\s59\17031059\GitHub\Laptime\Cars\TestUpdatedMotorMapbiggergr.mat')
 
 %Load Tyre Parameters
 load('C:\Laptime\Tyres\Main_Tyre_Load.mat')

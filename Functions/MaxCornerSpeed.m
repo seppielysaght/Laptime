@@ -1,4 +1,5 @@
-function [CarCornerSpeed] = MaxCornerSpeed(FRLatMax, FLLatMax, RRLatMax, RLLatMax, Car, CornerRadius, dragF)
+function [CarCornerSpeed] = MaxCornerSpeed(FRLatMax, FLLatMax, ...
+    RRLatMax, RLLatMax, Car, CornerRadius, dragF)
 %MAXCORNERSPEED Summary of this function goes here
 %   Detailed explanation goes here
 

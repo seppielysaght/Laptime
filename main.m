@@ -22,6 +22,5 @@ Output = Simulation(Track, Car, Tyre);
 %Time Output
 Output.laptime = sum(Output.Time);
 
-
 end
 

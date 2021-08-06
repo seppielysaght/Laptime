@@ -13,7 +13,8 @@ function [Track] = ApexFinder(Track)
 %Adds the apex array to the track struct
 Track.apex = zeros(Track.lenght,1);
 
-%Initilises a curvature array which is the absolute of the curv from track file incase there is direction indicated in the array of the track file. 
+%Initilises a curvature array which is the absolute of the curv from track 
+%file incase there is direction indicated in the array of the track file. 
 curvature = abs(Track.curv);
 
 %For loop to check if the current point is a apex
